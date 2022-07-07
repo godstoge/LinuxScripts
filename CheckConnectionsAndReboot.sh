@@ -3,7 +3,7 @@
 #
 # Linux bash script that will reboot the server after checking if there is any current SSH-connections to the server using native tools (i.e. ss).
 # Purpose: Reboot server if there is no data being transfered over the connections.
-# 
+# https://github.com/godstoge/LinuxScripts/blob/main/CheckConnectionsAndReboot.sh
 
 if  ss -t '( dport = :22 or sport = :22 )'
  then
