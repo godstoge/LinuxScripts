@@ -3,8 +3,14 @@
 #
 # Linux bash script that will reboot the server after checking if there is any current SSH-connections to the server using native tools (i.e. ss).
 # Purpose: Reboot server if there is no data being transfered over the connections.
+#
 # https://github.com/godstoge/LinuxScripts/blob/main/CheckConnectionsAndReboot.sh
+# https://raw.githubusercontent.com/godstoge/LinuxScripts/main/CheckConnectionsAndReboot.sh
 
+
+echo "------------------------------------------------------------------------------"
+uptime
+echo " "
 if  ss -t '( dport = :22 or sport = :22 )'
  then
   echo "Found current SSH-connections"; 
@@ -13,17 +19,20 @@ if  ss -t '( dport = :22 or sport = :22 )'
   
   # Iterate through the LastRcvd values to determine if any of them have been idle for more than 10 seconds
   # The assumption being that we have clients that are just idling with a keepalive, but most importantly: Are not transfering data to the SFTP-server.
-  clearedForReboot=1 //yes
+  clearedForReboot=1 #yes
   for connection in $connections   
    do
     if [ $connection -lt 10000 ];
-     then echo "Connection over 10 seconds: $connection";
+     then echo "Connection under 10 seconds: $connection";
+	 clearedForReboot=0 #Remove Cleared For Reboot-flag
     else 
-     echo "Connection under 10 seconds: $connection";
-     clearedForReboot=0
+     echo "Connection over 10 seconds: $connection";
     fi
    done
   
   echo "Conclusion - server is clear for reboot (true/False): $clearedForReboot"
-  if [ $clearedForReboot -eq 1 ]; then reboot;fi
+  if [ $clearedForReboot -eq 1 ]
+   then 
+    /sbin/shutdown -r now
+  fi
 fi
