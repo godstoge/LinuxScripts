@@ -9,11 +9,12 @@
 
 
 echo "------------------------------------------------------------------------------"
+date
 uptime
 echo " "
 if  ss -t '( dport = :22 or sport = :22 )'
  then
-  echo "Found current SSH-connections"; 
+  echo "Found SSH-connections in ss"; 
   # Get LastRcvd (in milliseconds) to the connections
   connections=$(ss -i '( sport = :ssh or sport = :ssh )' |  awk 'match($0, /last/) {print substr($0, RSTART)}' | awk -F ":" '{print $3" "$4}' | awk -F " " '{print $1}')
   
